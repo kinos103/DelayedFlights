@@ -7,6 +7,9 @@ histinfo <- hist(sum)
 #hist
 
 histDen <- hist(sum, breaks = c(-61,0,15,45,120,240,5000), plot=TRUE)
+
+histDen
+
 #histDen <- hist(sum, breaks = c(-61,-5,6,26,61,121,5000), plot=TRUE)
 #-61--5
 # -5-6  
@@ -15,13 +18,16 @@ histDen <- hist(sum, breaks = c(-61,0,15,45,120,240,5000), plot=TRUE)
 # 61-121
 # 121+
 
-DELAY <- cut(sum, c(-61,0,15,45,120,240,Inf), labels = c(0,1,2,3,4,5))
+DELAY <- cut(sum, c(0,15,45,120,Inf), labels = c(0,1,2,3))
 
 datFormatted.all <- cbind(DELAY,dat[,c(0,2:14,18:25,31,32)])
 
+# freq1 <- table(datFormatted.all$DELAY)
+# freq1
+
 datFormatted.all.nona <- na.omit(datFormatted.all)
 
-datFormatted.Final <- datFormatted.all.nona[!datFormatted.all.nona$DELAY == 0 & !datFormatted.all.nona$DELAY == 4 & !datFormatted.all.nona$DELAY == 5,]
+datFormatted.Final <- datFormatted.all.nona[!datFormatted.all.nona$DELAY == 3,]
 datFormatted.Final[,1]
 
 datFormatted.all.nona <- datFormatted.Final
@@ -47,8 +53,10 @@ DestRegion.frame <- data.frame(model.matrix(~ DestRegion. - 1))
 # Bind factored variables with dataset containing no NA values
 datFormatted.bind <- cbind(datFormatted.all.nona, UniqueCarrier.frame, OriginRegion.frame, DestRegion.frame)
 
+names(datFormatted.bind)
+
 # Select columns needed for analysis 
-datFormatted <- datFormatted.bind[,c(1:8,12:44)] # dataset with UniqueCarrier factored out. Other delays (WeatherDelay, SecurityDelay etc.)
+datFormatted <- datFormatted.bind[,c(1:8,17:20,22,25:58)] # dataset with UniqueCarrier factored out. Other delays (WeatherDelay, SecurityDelay etc.)
 
 names(datFormatted)
 
@@ -58,13 +66,23 @@ freq
 # 0      1      2      3      4      5 
 # 0 141174 327276 321942      0      0 
 
+sapply(datFormatted,class)
+delay <- as.numeric(datFormatted$DELAY)-1
+delay
+
+datFormatted <- cbind(delay,datFormatted[,2:47])
+
+names(datFormatted)
+
+freq2 <- table(datFormatted$delay)
+freq2
 
 # Collect Sample & Validation datasets
 
-#group.0 <- subset(datFormatted, datFormatted[,1] == 0)
+group.0 <- subset(datFormatted, datFormatted[,1] == 0)
 group.1 <- subset(datFormatted, datFormatted[,1] == 1)
 group.2 <- subset(datFormatted, datFormatted[,1] == 2)
-group.3 <- subset(datFormatted, datFormatted[,1] == 3)
+#group.3 <- subset(datFormatted, datFormatted[,1] == 3)
 #group.4 <- subset(datFormatted, datFormatted[,1] == 4)
 #group.5 <- subset(datFormatted, datFormatted[,1] == 5)
 # group.6 <- subset(datFormatted, datFormatted[,1] == 6)
@@ -72,10 +90,10 @@ group.3 <- subset(datFormatted, datFormatted[,1] == 3)
 # group.8 <- subset(datFormatted, datFormatted[,1] == 8)
 # group.9 <- subset(datFormatted, datFormatted[,1] == 9)
 
-#train.0 <- sample(nrow(group.0), 5000)
+train.0 <- sample(nrow(group.0), 50000)
 train.1 <- sample(nrow(group.1), 50000)
 train.2 <- sample(nrow(group.2), 50000)
-train.3 <- sample(nrow(group.3), 50000)
+#train.3 <- sample(nrow(group.3), 50000)
 #train.4 <- sample(nrow(group.4), 5000)
 #train.5 <- sample(nrow(group.5), 5000)
 # train.6 <- sample(nrow(group.6), 5000)
@@ -83,16 +101,16 @@ train.3 <- sample(nrow(group.3), 50000)
 # train.8 <- sample(nrow(group.8), 5000)
 # train.9 <- sample(nrow(group.9), 5000)
 
-train.data <- rbind(group.1[train.1,], group.2[train.2,], group.3[train.3,])
-               #group.0[train.0,], group.6[train.6,], group.7[train.7,], group.8[train.8,], group.9[train.9,],group.4[train.4,], group.5[train.5,]
+train.data <- rbind(group.0[train.0,], group.1[train.1,], group.2[train.2,])
+               # group.6[train.6,], group.7[train.7,], group.8[train.8,], group.9[train.9,],group.4[train.4,], group.5[train.5,], , group.3[train.3,]
 
-validation <- rbind(group.1[-train.1,], group.2[-train.2,], group.3[-train.3,])
-               #group.6[-train.6,], group.7[-train.7,], group.8[-train.8,], group.9[-train.9,]),group.0[-train.0,], , group.4[-train.4,], group.5[-train.5,]
+validation <- rbind(group.0[-train.0,], group.1[-train.1,], group.2[-train.2,])
+               #group.6[-train.6,], group.7[-train.7,], group.8[-train.8,], group.3[-train.3,], group.9[-train.9,]), , group.4[-train.4,], group.5[-train.5,]
 
 
-# sub.0 <- subset(validation, validation[,1] == 0)
-# sample.0 <- sample(nrow(sub.0), 50000)
-# val.0 <- sub.0[sample.0,]
+sub.0 <- subset(validation, validation[,1] == 0)
+sample.0 <- sample(nrow(sub.0), 50000)
+val.0 <- sub.0[sample.0,]
 
 sub.1 <- subset(validation, validation[,1] == 1)
 sample.1 <- sample(nrow(sub.1), 50000)
@@ -102,9 +120,9 @@ sub.2 <- subset(validation, validation[,1] == 2)
 sample.2 <- sample(nrow(sub.2), 50000)
 val.2 <- sub.2[sample.2,]
 
-sub.3 <- subset(validation, validation[,1] == 3)
-sample.3 <- sample(nrow(sub.3), 50000)
-val.3 <- sub.3[sample.3,]
+# sub.3 <- subset(validation, validation[,1] == 3)
+# sample.3 <- sample(nrow(sub.3), 50000)
+# val.3 <- sub.3[sample.3,]
 
 # sub.4 <- subset(validation, validation[,1] == 4)
 # sample.4 <- sample(nrow(sub.4), 5000)
@@ -130,10 +148,10 @@ val.3 <- sub.3[sample.3,]
 # sample.9 <- sample(nrow(sub.9), 5000)
 # val.9 <- sub.9[sample.9,]
 
-validation.data <- rbind(val.1, val.2, val.3) #, val.4, val.5, val.6, val.7, val.8, val.9)
+validation.data <- rbind(val.0, val.1, val.2) #, val.4, val.5, val.6, val.7, val.8, val.9)
 
-table(train.data$DELAY)
-table(validation.data$DELAY)
+table(train.data$delay)
+table(validation.data$delay)
 
 
 mean(as.numeric(validation.data[,1]))
@@ -162,7 +180,9 @@ for (i in seq(1,75,2)){
 }
 
 
-
+# L I N E A R  R E G R E S S I O N
+reg1 <- lm(delay ~., data = train.data)
+summary(reg1)
 
 
 
