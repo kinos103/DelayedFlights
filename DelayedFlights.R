@@ -1,5 +1,5 @@
 
-setwd("C:/Users/Haley Kinoshita/Documents/FA17/MGSC310/Group Project")
+setwd("/Users/abigailatchison/Documents/StatModels/FinalProject/")
 dat <- read.csv("DelayedFlights.csv")
 
 sum <- dat$ArrDelay + dat$DepDelay
@@ -19,9 +19,9 @@ histDen
 # 121+
 
 DELAY <- cut(sum, c(0,15,45,120,Inf), labels = c(0,1,2,3))
-
+names(dat)
 datFormatted.all <- cbind(DELAY,dat[,c(0,2:14,18:25,31,32)])
-
+names(datFormatted.all.nona)
 # freq1 <- table(datFormatted.all$DELAY)
 # freq1
 
@@ -156,9 +156,6 @@ table(validation.data$delay)
 
 mean(as.numeric(validation.data[,1]))
 
-# smaller sample sizes?
-# pick specific airports? - most popular? 
-
 
 # K N N
 
@@ -181,8 +178,21 @@ for (i in seq(1,75,2)){
 
 
 # L I N E A R  R E G R E S S I O N
+names(train.data)
 reg1 <- lm(delay ~., data = train.data)
 summary(reg1)
 
 
+#Tree
+library(tree)
+tree.train <- tree(delay~., train.data)
+summary(tree.train)
+
+library(rpart)
+classTreeAll <- rpart(delay~., data = train.data, method = "class")
+
+summary(classTreeAll)
+classTreeAll
+plot(classTreeAll)
+text(classTreeAll, use.n=TRUE, all=TRUE, cex=.8)
 
