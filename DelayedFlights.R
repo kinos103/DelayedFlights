@@ -196,3 +196,13 @@ classTreeAll
 plot(classTreeAll)
 text(classTreeAll, use.n=TRUE, all=TRUE, cex=.8)
 
+printcp(classTreeAll)
+
+pred <- predict(classTreeAll, newdata = validation.data, type = 'class')
+pred
+
+install.packages('mda')
+library(mda)
+CM = confusion(pred,validation.data$delay)
+CM
+
