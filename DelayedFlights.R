@@ -6,19 +6,12 @@ sum <- dat$ArrDelay + dat$DepDelay
 histinfo <- hist(sum)
 #hist
 
-histDen <- hist(sum, breaks = c(-61,0,15,45,120,240,5000), plot=TRUE)
+# histDen <- hist(sum, breaks = c(-61,0,15,45,120,240,5000), plot=TRUE)
+# histDen
 
-histDen
+DELAY <- cut(sum, c(0,30,180,240,Inf), labels = c(0,1,2,3))
 
-#histDen <- hist(sum, breaks = c(-61,-5,6,26,61,121,5000), plot=TRUE)
-#-61--5
-# -5-6  
-# 6-26
-# 26-61
-# 61-121
-# 121+
-
-DELAY <- cut(sum, c(0,15,45,120,Inf), labels = c(0,1,2,3))
+# DELAY <- cut(sum, c(0,15,45,120,Inf), labels = c(0,1,2,3))
 names(dat)
 datFormatted.all <- cbind(DELAY,dat[,c(0,2:14,18:25,31,32)])
 names(datFormatted.all.nona)
@@ -27,7 +20,7 @@ names(datFormatted.all.nona)
 
 datFormatted.all.nona <- na.omit(datFormatted.all)
 
-datFormatted.Final <- datFormatted.all.nona[!datFormatted.all.nona$DELAY == 3,]
+datFormatted.Final <- datFormatted.all.nona[!datFormatted.all.nona$DELAY == 3 & !datFormatted.all.nona$DELAY == 2,]
 datFormatted.Final[,1]
 
 datFormatted.all.nona <- datFormatted.Final
