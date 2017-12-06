@@ -14,7 +14,8 @@ DELAY <- cut(sum, c(0,30,120,240,Inf), labels = c(0,1,2,3))
 # DELAY <- cut(sum, c(0,15,45,120,Inf), labels = c(0,1,2,3))
 names(dat)
 datFormatted.all <- cbind(DELAY,dat[,c(0,2:14,18:25,31,32)])
-names(datFormatted.all.nona)
+
+names(datFormatted.all)
 # freq1 <- table(datFormatted.all$DELAY)
 # freq1
 
@@ -46,10 +47,10 @@ DestRegion.frame <- data.frame(model.matrix(~ DestRegion. - 1))
 # Bind factored variables with dataset containing no NA values
 datFormatted.bind <- cbind(datFormatted.all.nona, UniqueCarrier.frame, OriginRegion.frame, DestRegion.frame)
 
-names(datFormatted.bind)[6]
+names(datFormatted.bind)
 
 # Select columns needed for analysis 
-datFormatted <- datFormatted.bind[,c(1:5,7,8,17:20,22,25:58)] # dataset with UniqueCarrier factored out. Other delays (WeatherDelay, SecurityDelay etc.)
+datFormatted <- datFormatted.bind[,c(1:5,7,9,17:20,22,25:58)] # dataset with UniqueCarrier factored out. Other delays (WeatherDelay, SecurityDelay etc.)
 
 names(datFormatted)
 
@@ -62,8 +63,8 @@ freq
 sapply(datFormatted,class)
 delay <- as.numeric(datFormatted$DELAY)-1
 delay
-
-datFormatted <- cbind(delay,datFormatted[,2:47])
+names(datFormatted)
+datFormatted <- cbind(delay,datFormatted[,2:46])
 
 names(datFormatted)
 
@@ -191,11 +192,16 @@ text(classTreeAll, use.n=TRUE, all=TRUE, cex=.8)
 
 printcp(classTreeAll)
 
-pred <- predict(classTreeAll, newdata = validation.data, type = 'class')
-pred
+pred.vali <- predict(classTreeAll, newdata = validation.data, type = 'class')
+pred.vali
+
+pred.test <- predict(classTreeAll, newdata = train.data, type = 'class')
+pred.test
 
 install.packages('mda')
 library(mda)
-CM = confusion(pred,validation.data$delay)
-CM
+CM.vali = confusion(pred.vali,validation.data$delay)
+CM.vali
 
+CM.test = confusion(pred.test,train.data$delay)
+CM.test
